@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Зимний адвент для уроков</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --c-dark-bg: #1A362B;      /* ночной лес / фон */
+      --c-mauve: #A55D6E;        /* тёплый ягодный акцент */
+      --c-cyan-dusty: #C8D7DC;   /* пыльный циан, снежный акцент */
+      --c-copper: #D28D4E;       /* медь, тёплое свечение */
+      --c-text-light: #F0F4F7;   /* светлый текст и границы */
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, rgba(200, 215, 220, 0.12), transparent 55%),
+                  var(--c-dark-bg);
+      color: var(--c-text-light);
+    }
+
+    .advent-page {
+      min-height: 100vh;
+      padding: 32px 16px 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .advent-header {
+      text-align: center;
+    }
+
+    .advent-title {
+      font-size: clamp(1.8rem, 3vw, 2.2rem);
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      color: var(--c-cyan-dusty);
+      margin: 0;
+    }
+
+    .advent-subtitle {
+      margin-top: 8px;
+      font-size: 0.95rem;
+      opacity: 0.9;
+    }
+
+    /* Вкладки классов */
+    .advent-classes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+      justify-content: center;
+    }
+
+    .class-tab {
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(200, 215, 220, 0.4);
+      background: rgba(10, 30, 25, 0.8);
+      color: var(--c-text-light);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
+    }
+
+    .class-tab--active {
+      background: linear-gradient(135deg, var(--c-copper), var(--c-mauve));
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      transform: translateY(-1px);
+    }
+
+    .advent-controls {
+      display: grid;
+      gap: 12px;
+      padding: 16px 20px;
+      border-radius: 16px;
+      background: rgba(0, 0, 0, 0.16);
+      border: 1px solid rgba(200, 215, 220, 0.2);
+      backdrop-filter: blur(10px);
+    }
+
+    .advent-controls-row {
+      display: grid;
+      gap: 12px;
+    }
+
+    @media (min-width: 640px) {
+      .advent-controls-row--split {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .advent-controls label {
+      font-size: 0.85rem;
+      opacity: 0.9;
+      display: block;
+    }
+
+    .advent-controls input,
+    .advent-controls select,
+    .advent-controls textarea {
+      width: 100%;
+      margin-top: 4px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(200, 215, 220, 0.4);
+      background: rgba(10, 30, 25, 0.9);
+      color: var(--c-text-light);
+      font: inherit;
+    }
+
+    .advent-controls textarea {
+      resize: vertical;
+      min-height: 40px;
+    }
+
+    .advent-controls input:focus,
+    .advent-controls select:focus,
+    .advent-controls textarea:focus {
+      outline: 1px solid var(--c-copper);
+      box-shadow: 0 0 0 1px rgba(210, 141, 78, 0.4);
+    }
+
+    .btn-primary {
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--c-copper), var(--c-mauve));
+      color: var(--c-text-light);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.45);
+      transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.15s ease;
+      margin-top: 4px;
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.05);
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.55);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.45);
+    }
+
+    .advent-summary {
+      font-size: 0.85rem;
+      opacity: 0.9;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .advent-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(200, 215, 220, 0.4);
+      font-size: 0.75rem;
+      color: var(--c-text-light);
+      background: rgba(26, 54, 43, 0.8);
+    }
+
+    .advent-grid {
+      margin-top: 8px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .advent-card {
+      position: relative;
+      border-radius: 18px;
+      padding: 14px 14px 16px;
+      background: radial-gradient(circle at top left,
+                  rgba(210, 141, 78, 0.12), transparent 55%),
+                  rgba(8, 30, 24, 0.96);
+      border: 1px solid rgba(200, 215, 220, 0.25);
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.55);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, border-color 0.1s ease;
+    }
+
+    .advent-card--closed {
+      border-style: dashed;
+      border-color: rgba(200, 215, 220, 0.35);
+      opacity: 0.9;
+    }
+
+    .advent-card--open {
+      border-color: rgba(210, 141, 78, 0.8);
+      transform: translateY(-1px);
+      box-shadow: 0 12px 26px rgba(0,0,0,0.6);
+    }
+
+    .advent-card-day {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--c-cyan-dusty);
+      opacity: 0.9;
+    }
+
+    .advent-card-title {
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--c-text-light);
+    }
+
+    .advent-card-body,
+    .advent-card-example,
+    .advent-card-meta {
+      font-size: 0.86rem;
+      line-height: 1.4;
+      opacity: 0.95;
+    }
+
+    .advent-card-example {
+      margin-top: 4px;
+      font-size: 0.8rem;
+    }
+
+    .advent-card-meta {
+      margin-top: 6px;
+      font-size: 0.8rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      opacity: 0.85;
+    }
+
+    .advent-card-meta strong {
+      color: var(--c-copper);
+    }
+
+    /* скрываем содержимое, если день закрыт */
+    .advent-card--closed .advent-card-body,
+    .advent-card--closed .advent-card-example,
+    .advent-card--closed .advent-card-meta,
+    .advent-card--closed .advent-card-prompt {
+      display: none;
+    }
+
+    .advent-card-open-btn {
+      margin-top: 6px;
+      align-self: flex-start;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(200, 215, 220, 0.6);
+      background: rgba(10, 30, 25, 0.9);
+      color: var(--c-text-light);
+      font-size: 0.78rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .advent-card--open .advent-card-open-btn {
+      opacity: 0.8;
+    }
+
+    .advent-empty {
+      margin-top: 12px;
+      font-size: 0.9rem;
+      opacity: 0.85;
+    }
+
+    .advent-card-prompt {
+      font-size: 0.75rem;
+      opacity: 0.9;
+      margin-top: 4px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      word-break: break-word;
+    }
+
+    .advent-card-focus {
+      display: inline-block;
+      margin-top: 4px;
+      font-size: 0.8rem;
+      opacity: 0.9;
+      color: var(--c-cyan-dusty);
+    }
+  </style>
+</head>
+<body>
+  <div class="advent-page">
+    <header class="advent-header">
+      <h1 class="advent-title">Зимний адвент для уроков</h1>
+      <p class="advent-subtitle">
+        Настройте количество классов, выберите текущий класс и ведите отдельный зимний адвент для каждого.
+        Открытые дни сохраняются.
+      </p>
+
+      <section class="advent-controls" aria-label="Настройки классов и адвента">
+        <div class="advent-controls-row advent-controls-row--split">
+          <label>
+            Количество классов (1–20)
+            <input type="number" id="classCountInput" min="1" max="20" value="3" />
+          </label>
+          <label>
+            Язык интерфейса
+            <select id="languageSelect">
+              <option value="ru">Русский</option>
+              <option value="en">English</option>
+              <option value="fr">Français</option>
+              <option value="de">Deutsch</option>
+              <option value="es">Español</option>
+              <option value="it">Italiano</option>
+              <option value="zh">中文</option>
+            </select>
+          </label>
+        </div>
+
+        <nav class="advent-classes" id="classTabs" aria-label="Классы"></nav>
+
+        <div class="advent-controls-row advent-controls-row--split">
+          <label>
+            Количество дней (1–30)
+            <input type="number" id="daysInput" min="1" max="30" value="10" />
+          </label>
+          <label>
+            Предмет
+            <input type="text" id="subjectInput" placeholder="Например: математика, английский, биология" />
+          </label>
+        </div>
+
+        <div class="advent-controls-row advent-controls-row--split">
+          <label>
+            Тип фокуса
+            <select id="focusType">
+              <option value="topic">Тема</option>
+              <option value="term">Термин</option>
+              <option value="word">Слово/выражение</option>
+              <option value="chapter">Глава/раздел</option>
+            </select>
+          </label>
+          <label>
+            Фокус (что вы сейчас проходите?)
+            <input
+              type="text"
+              id="focusInput"
+              placeholder='Например: дроби / фотосинтез / Past Simple / "Герои романа"'
+            />
+          </label>
+        </div>
+
+        <div class="advent-controls-row">
+          <button type="button" class="btn-primary" id="generateBtn">
+            ✨ Сгенерировать адвент для этого класса
+          </button>
+        </div>
+
+        <div class="advent-summary" id="adventSummary"></div>
+      </section>
+    </header>
+
+    <section aria-label="Календарь заданий">
+      <div id="adventGrid" class="advent-grid"></div>
+      <p id="emptyState" class="advent-empty">
+        Пока здесь пусто. Настройте параметры и нажмите «Сгенерировать адвент».
+      </p>
+    </section>
+  </div>
+
+  <script>
+    const LABELS = {
+      ru: { day: "День", time: "Время", example: "Примеры", subject: "Предмет", focus: "Фокус" },
+      en: { day: "Day", time: "Time", example: "Examples", subject: "Subject", focus: "Focus" },
+      fr: { day: "Jour", time: "Durée", example: "Exemples", subject: "Discipline", focus: "Focus" },
+      de: { day: "Tag", time: "Zeit", example: "Beispiele", subject: "Fach", focus: "Fokus" },
+      es: { day: "Día", time: "Tiempo", example: "Ejemplos", subject: "Asignatura", focus: "Foco" },
+      it: { day: "Giorno", time: "Tempo", example: "Esempi", subject: "Materia", focus: "Focus" },
+      zh: { day: "День", time: "Время", example: "Примеры", subject: "Предмет", focus: "Фокус" } // упрощённо
+    };
+
+    // Фраза с темой/словом, которая будет подставляться в задания вместо "фокуса"
+    function buildFocusValue(lang, focus) {
+      const has = focus && focus.trim().length > 0;
+      const f = (focus || "").trim();
+
+      if (lang === "en") {
+        return has ? `the topic/idea "${f}"` : "your topic/idea";
+      }
+      if (lang === "fr") {
+        return has ? `le sujet ou l’idée « ${f} »` : "votre sujet ou idée";
+      }
+      if (lang === "de") {
+        return has ? `das Thema oder die Idee „${f}“` : "euer Thema oder eure Idee";
+      }
+      if (lang === "es") {
+        return has ? `el tema o la idea «${f}»` : "tu tema o idea";
+      }
+      if (lang === "it") {
+        return has ? `l’argomento o l’idea «${f}»` : "il tuo argomento o idea";
+      }
+      if (lang === "zh") {
+        return has ? `主题/想法「${f}」` : "你的学习主题或想法";
+      }
+      // по умолчанию — русский
+      return has ? `тема/идея «${f}»` : "ваша тема/идея";
+    }
+
+    // 30 заданий — тексты на русском, в нужном месте ставим %FOCUS%, туда подставляется тема
+    const TASKS = [
+      {
+        id: 1,
+        title: "Зимний ребрендинг темы",
+        body: "В парах: придумайте, как %FOCUS% выглядела бы как зимний предмет (варежка, гирлянда, фонарь, термос и т.п.), и почему.",
+        examples: [
+          "Дроби — как гирлянда: развешиваем целое на части.",
+          "Электричество — как гирлянда: всё оживает, когда оно есть.",
+          "Синонимы — как тёплые варежки: всегда есть пара."
+        ],
+        time: "1 мин подумать, 2 мин обсудить, 1 мин рассказать"
+      },
+      {
+        id: 2,
+        title: "Снежный сюжет",
+        body: "В группах по 3–4: придумайте короткую зимнюю историю (4–5 предложений), в которой естественно появляется %FOCUS%. Используйте минимум два зимних слова (снег, мороз, ёлка, какао…).",
+        examples: [
+          "Мы делили новогодний пирог на дроби и никак не могли решить, кому достанется самый сладкий кусок.",
+          "Снеговик объяснял, как работает глагол être, пока не растаял от тепла знаний.",
+          "На катке мы заметили идеальную окружность и решили измерить всё вокруг."
+        ],
+        time: "3–4 мин придумать, 2–3 мин рассказать"
+      },
+      {
+        id: 3,
+        title: "Зимняя метафора",
+        body: "В парах: закончите фразу «%FOCUS% — это как зимний объект, потому что…» (снегопад, лёд, плед, гирлянда, каток и т.п.).",
+        examples: [
+          "Фотосинтез — как батарея у окна: получает свет и даёт энергию.",
+          "Исторический герой — как факел в метели: ведёт вперёд.",
+          "Сложные слова — как сугробы: большие, но можно разобрать на части."
+        ],
+        time: "2 мин придумать, 2 мин поделиться"
+      },
+      {
+        id: 4,
+        title: "Тема под другим углом",
+        body: "В группах: представьте, что %FOCUS% — часть зимней ярмарки или катка. Что там будет «прилавком», что «дорогой», что «правилами», а что «посетителями»?",
+        examples: [
+          "Глава «Средние века» — ярмарка, где каждый прилавок — отдельное сословие.",
+          "Орфография — каток с правилами: есть гладкие места и опасные повороты.",
+          "Таблица умножения — зимний рынок: всё разложено по рядам."
+        ],
+        time: "4–5 мин придумать, 2–3 мин рассказать"
+      },
+      {
+        id: 5,
+        title: "Морозный слоган",
+        body: "В парах: придумайте зимний рекламный слоган, который «продаёт» пользу %FOCUS% (1–2 строки).",
+        examples: [
+          "Уравнения: согреют порядок в любой задаче.",
+          "Орфография: пусть ошибки тают, как снег на солнце.",
+          "История: распакуй прошлое, как подарок под ёлкой."
+        ],
+        time: "2–3 мин придумать, 2 мин озвучить"
+      },
+      {
+        id: 6,
+        title: "Снежная трансформация",
+        body: "В парах: объясните %FOCUS% так, будто рассказываете младшему школьнику в новогоднюю ночь (3–4 простых предложения).",
+        examples: [
+          "Past Simple — как следы на снегу: то, что уже случилось.",
+          "Клетка — маленький домик организма, где всё работает, как на кухне.",
+          "Деление — как разрезать пирог так, чтобы всем досталось."
+        ],
+        time: "3 мин подготовка, 2 мин обмен объяснениями"
+      },
+      {
+        id: 7,
+        title: "Снежный раунд вопросов",
+        body: "Индивидуально → весь класс: каждый придумывает один вопрос по %FOCUS%, пишет его, затем «снежки» (листочки) перемешиваются. Каждый вытягивает чужой вопрос и отвечает.",
+        examples: [
+          "Когда в реальной жизни мы пользуемся дробями?",
+          "Зачем нужны неправильные глаголы?",
+          "Почему клетке нужны разные органоиды?"
+        ],
+        time: "2 мин на вопросы, 3–5 мин ответы"
+      },
+      {
+        id: 8,
+        title: "Пара говорит — класс угадывает",
+        body: "В парах: выберите одну часть темы (правило, персонажа, термин, слово) и объясните её, используя только зимние сравнения, не называя прямо. Класс угадывает, о чём речь.",
+        examples: [
+          "Он как ёлка в центре площади: вокруг него всё крутится, все на него смотрят (главный герой).",
+          "Это как лёд: твёрдое, но может треснуть (сильный аргумент).",
+          "Это как морозный узор: красиво, но запутанно (сложная формула)."
+        ],
+        time: "3–4 мин придумать, 3–4 мин на несколько показов"
+      },
+      {
+        id: 9,
+        title: "Шарф аргументов",
+        body: "В группах: получите спорное утверждение по теме %FOCUS% и составьте к нему аргументы «за» и «против» (как звенья шарфа).",
+        examples: [
+          "Классическая литература слишком сложна для школы.",
+          "Дроби обычным людям почти не нужны.",
+          "Нерегулярные глаголы лучше заменить на регулярные."
+        ],
+        time: "4–5 мин на аргументы, 2–3 мин на обсуждение",
+        prompt: "Сгенерируй 5 безопасных спорных утверждений о теме/термине/слове ‘{фокус}’ для обсуждения с учениками в школе. Без политики и личных оценок."
+      },
+      {
+        id: 10,
+        title: "Переверни ход",
+        body: "В парах/группах: получите утверждение по теме %FOCUS%, в котором спрятана неточность. Найдите ошибку и перепишите фразу так, чтобы она стала верной.",
+        examples: [
+          "Все глаголы в прошедшем времени в английском заканчиваются на -ed.",
+          "Углы любого треугольника всегда равны между собой.",
+          "В тексте всегда один главный герой."
+        ],
+        time: "3–4 мин работа, 3 мин обсуждение 1–2 примеров",
+        prompt: "Придумай 5 утверждений по теме ‘{фокус}’, которые звучат правдоподобно, но содержат небольшую ошибку школьного уровня."
+      },
+      {
+        id: 11,
+        title: "Снежный круг",
+        body: "Весь класс: по кругу каждый называет по одному слову/факту/примеру, связанному с сегодняшней темой. Нельзя повторяться.",
+        examples: [
+          "Для глаголов: write, went, build, speak…",
+          "Для клетки: ядро, мембрана, митохондрии…",
+          "Для истории: князь, реформа, битва…"
+        ],
+        time: "3–5 минут (1–2 круга)"
+      },
+      {
+        id: 12,
+        title: "Зимняя лестница",
+        body: "В группах: нарисуйте 4–5 ступеней и заполните их шагами «как освоить %FOCUS% от простого к сложному».",
+        examples: [
+          "Уравнения: понять неизвестное → научиться переносить → решать простые → проверять ответ.",
+          "Словарный запас: прочитать слова → понять значение → придумать примеры → использовать в речи.",
+          "Историческая тема: прочитать → выделить главное → объяснить другу → сравнить с другими эпохами."
+        ],
+        time: "5–7 мин на составление, 2–3 мин на 1–2 представления"
+      },
+      {
+        id: 13,
+        title: "Снежный коллапс",
+        body: "В группах: представьте, что тема/глава «рухнула как снежная крепость». Запишите 5–7 «кирпичиков» (главных элементов), без которых она не существует, и попробуйте выстроить их в порядок.",
+        examples: [
+          "Солнечная система: Солнце → планеты → орбиты → спутники → пояс астероидов.",
+          "Текст: тема → главная мысль → структура → детали → вывод.",
+          "Клетка: мембрана → цитоплазма → ядро → органоиды → функции."
+        ],
+        time: "5–7 минут"
+      },
+      {
+        id: 14,
+        title: "Холодная правда",
+        body: "Индивидуально → обсуждение: ученики записывают одну честную фразу: «В теме %FOCUS% мне труднее всего…». Листочки можно собрать анонимно, прочитать пару примеров и вместе предложить идеи, что с этим делать.",
+        examples: [
+          "…запоминать формулы.",
+          "…не бояться говорить на английском.",
+          "…пересказывать текст своими словами."
+        ],
+        time: "2–3 мин написать, 3–5 мин обсудить"
+      },
+      {
+        id: 15,
+        title: "Зимняя напоминалка",
+        body: "Индивидуально: придумайте короткую зимнюю фразу (1 строка), чтобы запомнить важную часть темы %FOCUS%.",
+        examples: [
+          "Past Simple — как следы: уже оставлены.",
+          "Треугольник: как снежинка — все углы вместе дают 180 градусов.",
+          "Орфография: как шапка и шарф — лучше надеть правильно сразу."
+        ],
+        time: "2–3 мин"
+      },
+      {
+        id: 16,
+        title: "Праздничные синонимы",
+        body: "В парах: выберите 3–5 терминов или ключевых слов из темы %FOCUS% и придумайте к каждому «праздничное» название, по которому всё равно можно догадаться, о чём речь.",
+        examples: [
+          "Нерегулярные глаголы → грамматические бунтари.",
+          "Клетка → микродомик организма.",
+          "Дроби → пряничные кусочки целого."
+        ],
+        time: "4–5 мин придумать, 2–3 мин поделиться"
+      },
+      {
+        id: 17,
+        title: "Зимний челлендж идей",
+        body: "В группах: за ограниченное время придумайте как можно больше идей, где в жизни (особенно зимой) может пригодиться %FOCUS%.",
+        examples: [
+          "Дроби: делить торт, делить время, делить бюджет на подарки.",
+          "Физика: объяснить, почему скользит лёд.",
+          "Языки: писать открытки и сообщения друзьям."
+        ],
+        time: "3 мин генерация, 3–4 мин обмен"
+      },
+      {
+        id: 18,
+        title: "Тёплое «спасибо» себе",
+        body: "Индивидуально → по желанию в парах: закончите фразу «Сегодня я благодарю себя за то, что в теме/главе/словах про %FOCUS% я…».",
+        examples: [
+          "…не испугалась задать вопрос.",
+          "…сам нашёл ошибку в решении.",
+          "…смогла сказать фразу на английском без подсказки."
+        ],
+        time: "2–3 мин подумать и записать, 2–3 мин по желанию поделиться"
+      },
+      {
+        id: 19,
+        title: "Фейерверк фактов",
+        body: "В группах: соберите как можно больше коротких фактов/утверждений про %FOCUS%. Потом каждая группа называет по очереди по одному новому факту, не повторяясь: получается общий «фейерверк».",
+        examples: [
+          "Про фотосинтез: нужен свет, вода, хлорофилл, вырабатывается кислород.",
+          "Про героя романа: его поступки, характер, отношения с другими.",
+          "Про грамматическую тему: формы, примеры, исключения."
+        ],
+        time: "3–4 мин на список, 3–5 мин на общий круг"
+      },
+      {
+        id: 20,
+        title: "Рецепт новогоднего салата",
+        body: "В парах: составьте «рецепт зимней версии» для %FOCUS%. Укажите 3–5 ингредиентов и короткую инструкцию.",
+        examples: [
+          "Фотосинтез: щепотка света, стакан воды, зелёный колпачок хлорофилла, перемешать на солнце.",
+          "Грамматика: горсть правил, щепотка примеров, ложка смелости говорить.",
+          "История: несколько дат, важные имена, щепотка любопытства."
+        ],
+        time: "3–4 мин придумать, 2 мин рассказать"
+      },
+      {
+        id: 21,
+        title: "Снежная ревизия",
+        body: "В парах: перечислите 5 вещей, связанных с %FOCUS%, которые вы точно знаете, и 2, которые «ещё под снежком».",
+        examples: [
+          "Знаю: формулы, порядок действий. Под снежком: знаки, отрицательные дроби.",
+          "Знаю: словарный запас. Под снежком: произношение.",
+          "Знаю: сюжет. Под снежком: мотивы героя."
+        ],
+        time: "3–4 мин"
+      },
+      {
+        id: 22,
+        title: "Зимний блиц-опрос",
+        body: "В парах: по очереди задавайте друг другу быстрые мини-вопросы по %FOCUS% — 10 секунд на ответ. Можно добавлять зимние ограничения: отвечать «как будто мёрзнете» или «как будто пьёте какао».",
+        examples: [
+          "Приведи пример.",
+          "Когда это используется?",
+          "Что самое сложное в этой теме?"
+        ],
+        time: "3–5 мин"
+      },
+      {
+        id: 23,
+        title: "Дед Мороз объясняет тему",
+        body: "В парах: объясните %FOCUS% так, будто вы — Дед Мороз, который рассказывает детям про науку/слово/термин. Тёплым, добрым, понятным голосом.",
+        examples: [
+          "Ребята, Past Simple — это когда всё уже произошло… как подарок, который вы уже нашли под ёлкой.",
+          "Ребята, дроби — это когда пирог делят честно между всеми.",
+          "Ребята, клетка — это маленький домик, где у каждого своя работа."
+        ],
+        time: "3–4 мин"
+      },
+      {
+        id: 24,
+        title: "Снежные предположения",
+        body: "В группах: составьте список из 5 «Что если…?» вопросов про %FOCUS%.",
+        examples: [
+          "Что если в романе убрать второстепенных героев?",
+          "Что если дроби всегда переворачивать?",
+          "Что если в клетке перестанут работать митохондрии?"
+        ],
+        time: "3–4 мин генерация, 2 мин обсуждение"
+      },
+      {
+        id: 25,
+        title: "Тропа зимних примеров",
+        body: "В парах: придумайте 3 коротких примера применения %FOCUS% в зимней жизни.",
+        examples: [
+          "Дроби — делить торт и мандарины.",
+          "Химия — посыпать дорожку реагентом.",
+          "Иностранный язык — написать открытку другу."
+        ],
+        time: "3–5 мин"
+      },
+      {
+        id: 26,
+        title: "Снежное табу",
+        body: "В парах: объясните %FOCUS%, не используя три запретных слова, которые вы выбираете сами.",
+        examples: [
+          "Фотосинтез без слов «лист», «свет», «кислород».",
+          "Дроби без слов «делить», «часть», «целое».",
+          "Прилагательные без слов «качество», «описание», «слово»."
+        ],
+        time: "2–3 мин подготовить, 2–3 мин показать"
+      },
+      {
+        id: 27,
+        title: "Снежная карта смысла",
+        body: "В парах: нарисуйте «зимнюю интеллект-карту» для %FOCUS% — в центре значок темы, вокруг 4 снежинки с ключевыми идеями.",
+        examples: [
+          "Фокус: клетка → снежинки: мембрана, ядро, органоиды, функции.",
+          "Фокус: герой → снежинки: характер, поступки, отношения, вывод.",
+          "Фокус: грамматическая тема → снежинки: формы, правила, исключения, примеры."
+        ],
+        time: "4–6 мин"
+      },
+      {
+        id: 28,
+        title: "Морозный ребус",
+        body: "В парах: придумайте и нарисуйте небольшой ребус, где ответ — %FOCUS%.",
+        examples: [
+          "Клетка = ❄ + дом.",
+          "Глагол = снег + стрелка вперёд.",
+          "Дроби = пирог + нож."
+        ],
+        time: "4–5 мин"
+      },
+      {
+        id: 29,
+        title: "Зимний символический портрет",
+        body: "Индивидуально: нарисуйте предмет или персонажа, который олицетворяет %FOCUS% зимой.",
+        examples: [
+          "Глаголы — как гирлянда действий.",
+          "Энергия — как факел в снегу.",
+          "История — как старый фонарь, освещающий прошлое."
+        ],
+        time: "3–4 мин"
+      },
+      {
+        id: 30,
+        title: "Рисуем тему с закрытыми глазами",
+        body: "В парах: по очереди нарисуйте %FOCUS% вслепую (или почти вслепую), а партнёр должен угадать и объяснить, почему рисунок может символизировать тему.",
+        examples: [
+          "Угадать формулу по схеме.",
+          "Угадать героя по силуэту.",
+          "Угадать тему по символу."
+        ],
+        time: "3–5 мин"
+      }
+    ];
+
+    const STORAGE_KEY = 'adventMultiClassV1';
+
+    const classCountInput = document.getElementById('classCountInput');
+    const classTabs = document.getElementById('classTabs');
+    const languageSelect = document.getElementById('languageSelect');
+    const daysInput = document.getElementById('daysInput');
+    const subjectInput = document.getElementById('subjectInput');
+    const focusType = document.getElementById('focusType'); // пока только в summary
+    const focusInput = document.getElementById('focusInput');
+    const generateBtn = document.getElementById('generateBtn');
+    const adventGrid = document.getElementById('adventGrid');
+    const emptyState = document.getElementById('emptyState');
+    const adventSummary = document.getElementById('adventSummary');
+
+    let state = {
+      classCount: 3,
+      currentClassId: 'class1',
+      classes: {}
+    };
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object') {
+            state = {
+              classCount: parsed.classCount || 3,
+              currentClassId: parsed.currentClassId || 'class1',
+              classes: parsed.classes || {}
+            };
+          }
+        }
+      } catch (e) {
+        // дефолт
+      }
+      if (state.classCount < 1) state.classCount = 1;
+      if (!state.currentClassId) state.currentClassId = 'class1';
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {}
+    }
+
+    function renderClassTabs() {
+      classTabs.innerHTML = '';
+      const count = state.classCount || 1;
+      for (let i = 1; i <= count; i++) {
+        const id = `class${i}`;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'class-tab' + (id === state.currentClassId ? ' class-tab--active' : '');
+        btn.dataset.classId = id;
+        btn.textContent = `Класс ${i}`;
+        classTabs.appendChild(btn);
+      }
+      classCountInput.value = String(count);
+    }
+
+    function getCurrentClassState() {
+      return state.classes[state.currentClassId] || null;
+    }
+
+    function setCurrentClassState(clsState) {
+      state.classes[state.currentClassId] = clsState;
+      saveState();
+    }
+
+    function shuffle(array) {
+      const a = array.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function syncControlsFromState() {
+      const st = getCurrentClassState();
+      if (!st) {
+        subjectInput.value = '';
+        focusInput.value = '';
+        focusType.value = 'topic';
+        adventSummary.innerHTML = '';
+        adventGrid.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+      if (st.lang) languageSelect.value = st.lang;
+      if (st.days) daysInput.value = st.days;
+      subjectInput.value = st.subject || '';
+      focusInput.value = st.focus || '';
+      focusType.value = st.focusKind || 'topic';
+    }
+
+    function generateCalendarForCurrentClass() {
+      const lang = languageSelect.value;
+      let days = parseInt(daysInput.value, 10);
+      if (isNaN(days) || days < 1) days = 1;
+      if (days > TASKS.length) days = TASKS.length;
+
+      const subject = subjectInput.value.trim();
+      const focus = focusInput.value.trim();
+      const focusKind = focusType.value;
+
+      const chosenTasks = shuffle(TASKS).slice(0, days);
+      const taskIds = chosenTasks.map(t => t.id);
+      const opened = new Array(taskIds.length).fill(false);
+
+      const newState = {
+        lang,
+        days,
+        subject,
+        focus,
+        focusKind,
+        taskIds,
+        opened
+      };
+
+      setCurrentClassState(newState);
+      renderCalendarForCurrentClass();
+    }
+
+    function renderCalendarForCurrentClass() {
+      const st = getCurrentClassState();
+      const lang = st && st.lang ? st.lang : languageSelect.value;
+      const labels = LABELS[lang] || LABELS.ru;
+
+      if (!st || !st.taskIds || st.taskIds.length === 0) {
+        adventGrid.innerHTML = '';
+        emptyState.style.display = 'block';
+        adventSummary.innerHTML = '';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+
+      const parts = [];
+      if (st.subject) parts.push(`${labels.subject}: ${st.subject}`);
+      if (st.focus) {
+        // просто показываем выбранный фокус
+        parts.push(`${labels.focus}: ${st.focus}`);
+      }
+      parts.push(`${st.taskIds.length} заданий`);
+
+      adventSummary.innerHTML = parts
+        .map(text => `<span class="advent-chip">${text}</span>`)
+        .join(' ');
+
+      adventGrid.innerHTML = '';
+
+      st.taskIds.forEach((id, index) => {
+        const task = TASKS.find(t => t.id === id);
+        if (!task) return;
+
+        const card = document.createElement('article');
+        const isOpen = Array.isArray(st.opened) ? !!st.opened[index] : false;
+        card.className = 'advent-card ' + (isOpen ? 'advent-card--open' : 'advent-card--closed');
+        card.dataset.index = String(index);
+
+        const dayLabel = `${labels.day} ${index + 1}`;
+
+        // подставляем тему/слово в текст задания
+        const focusText = buildFocusValue(lang, st.focus);
+        const bodyText = (task.body || "").replace(/%FOCUS%/g, focusText);
+
+        const examplesHtml = task.examples && task.examples.length
+          ? `<div class="advent-card-example"><strong>${labels.example}:</strong> ${task.examples.join(' ')}</div>`
+          : '';
+
+        const promptHtml = task.prompt
+          ? `<div class="advent-card-prompt"><strong>Промпт для учителя:</strong> ${task.prompt}</div>`
+          : '';
+
+        const btnLabel = isOpen ? 'Открыто' : 'Открыть день';
+
+        card.innerHTML = `
+          <div class="advent-card-day">${dayLabel}</div>
+          <div class="advent-card-title">${task.title}</div>
+          <div class="advent-card-body">${bodyText}</div>
+          ${examplesHtml}
+          ${promptHtml}
+          <div class="advent-card-meta">
+            <span><strong>${labels.time}:</strong> ${task.time}</span>
+          </div>
+          <button type="button" class="advent-card-open-btn">${btnLabel}</button>
+        `;
+
+        adventGrid.appendChild(card);
+      });
+    }
+
+    // клик по карточкам (открыть день)
+    adventGrid.addEventListener('click', (e) => {
+      const btn = e.target.closest('.advent-card-open-btn');
+      if (!btn) return;
+      const card = btn.closest('.advent-card');
+      if (!card) return;
+      const index = parseInt(card.dataset.index, 10);
+      if (isNaN(index)) return;
+
+      const st = getCurrentClassState();
+      if (!st || !st.taskIds) return;
+
+      if (!Array.isArray(st.opened)) {
+        st.opened = new Array(st.taskIds.length).fill(false);
+      }
+
+      if (!st.opened[index]) {
+        st.opened[index] = true;
+        setCurrentClassState(st);
+        card.classList.remove('advent-card--closed');
+        card.classList.add('advent-card--open');
+        btn.textContent = 'Открыто';
+      }
+    });
+
+    // вкладки классов
+    classTabs.addEventListener('click', (e) => {
+      const btn = e.target.closest('.class-tab');
+      if (!btn) return;
+      const id = btn.dataset.classId;
+      if (!id || id === state.currentClassId) return;
+      state.currentClassId = id;
+      saveState();
+
+      Array.from(classTabs.querySelectorAll('.class-tab')).forEach(b => {
+        b.classList.toggle('class-tab--active', b.dataset.classId === state.currentClassId);
+      });
+
+      syncControlsFromState();
+      renderCalendarForCurrentClass();
+    });
+
+    // изменение количества классов
+    classCountInput.addEventListener('change', () => {
+      let val = parseInt(classCountInput.value, 10);
+      if (isNaN(val) || val < 1) val = 1;
+      if (val > 20) val = 20;
+      state.classCount = val;
+      if (!state.currentClassId) {
+        state.currentClassId = 'class1';
+      } else {
+        const currentIndex = parseInt(state.currentClassId.replace('class', ''), 10);
+        if (currentIndex > val) {
+          state.currentClassId = 'class1';
+        }
+      }
+      saveState();
+      renderClassTabs();
+      syncControlsFromState();
+      renderCalendarForCurrentClass();
+    });
+
+    // генерация адвента
+    generateBtn.addEventListener('click', generateCalendarForCurrentClass);
+
+    // смена языка — обновляем подписи и текст с темой
+    languageSelect.addEventListener('change', () => {
+      const st = getCurrentClassState();
+      if (st) {
+        st.lang = languageSelect.value;
+        setCurrentClassState(st);
+        renderCalendarForCurrentClass();
+      }
+    });
+
+    // инициализация
+    loadState();
+    renderClassTabs();
+    syncControlsFromState();
+    renderCalendarForCurrentClass();
+  </script>
+</body>
+</html>
